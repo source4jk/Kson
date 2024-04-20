@@ -1,0 +1,13 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
+    id 'java'
+    id 'java-library'
+    id 'maven-publish'
+}
+
+repositories {
+    mavenCentral()
+}
+
+group = 'cord.json'
+version = '0.0.1'
