@@ -8,10 +8,10 @@ fun ksonArrayOf(vararg values: Any?): KsonArray {
 
 class KsonArray(private val list: MutableList<Any?>) : MutableIterable<Any?> {
 
-    @Suppress("UNCHECKED_CAST")
-    fun <T> get(index: Int): T? {
-        return this.list.getOrNull(index) as? T
-    }
+    fun asString(index: Int) = this.list[index] as? String
+    fun asNumber(index: Int) = this.list[index] as? Number
+    fun asKson(index: Int) = this.list[index] as? Kson
+    fun asKsonArray(index: Int) = this.list[index] as? KsonArray
 
     fun add(value: Any?, index: Int = this.list.lastIndex + 1): KsonArray {
         this.list.add(index, value)

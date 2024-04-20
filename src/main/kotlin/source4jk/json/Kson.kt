@@ -10,11 +10,10 @@ fun ksonOf(buildAction: KsonBuilder.() -> Unit): Kson {
 
 class Kson(private val map: MutableMap<String, Any?>): MutableIterable<Any?> {
 
-    @Suppress("UNCHECKED_CAST")
-    fun <T> get(key: String): T? {
-        if (!this.map.containsKey(key) || this.map[key] == null) return null
-        return this.map[key] as? T?
-    }
+    fun asString(key: String) = this.map[key] as? String
+    fun asNumber(key: String) = this.map[key] as? Number
+    fun asKson(key: String) = this.map[key] as? Kson
+    fun asKsonArray(key: String) = this.map[key] as? KsonArray
 
     fun set(key: String, value: String?) = this.putToMap(key, value)
     fun set(key: String, value: Number?) = this.putToMap(key, value)
