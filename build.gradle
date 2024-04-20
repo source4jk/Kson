@@ -11,3 +11,16 @@ repositories {
 
 group = 'source4jk.json'
 version = '0.0.1'
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:deprecation"
+}
+
+kotlin {
+    jvmToolchain(11)
+}
+
+wrapper {
+    gradleVersion("8.2")
+}
