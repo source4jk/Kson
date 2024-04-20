@@ -1,7 +1,6 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.22'
     id 'java'
-    id 'java-library'
     id 'maven-publish'
 }
 
@@ -11,23 +10,23 @@ repositories {
 }
 
 group = 'source4jk.json'
-version = '0.0.1'
+version = '0.0.2'
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.compilerArgs << "-Xlint:deprecation"
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-
-            groupId = group as Publication
-            artifactId = 'Kson' as Publication
-            version = version as Publication
-        }
-    }
+java {
+    withSourcesJar()
 }
 
 kotlin {
@@ -37,3 +36,5 @@ kotlin {
 wrapper {
     gradleVersion("8.2")
 }
+
+
