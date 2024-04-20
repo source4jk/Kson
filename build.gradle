@@ -17,6 +17,18 @@ tasks.withType(JavaCompile).configureEach {
     options.compilerArgs << "-Xlint:deprecation"
 }
 
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            groupId = group as Publication
+            artifactId = 'Kson' as Publication
+            version = version as Publication
+        }
+    }
+}
+
 kotlin {
     jvmToolchain(11)
 }

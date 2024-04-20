@@ -6,7 +6,7 @@ fun ksonArrayOf(vararg values: Any?): KsonArray {
     return KsonArray(values.toMutableList())
 }
 
-class KsonArray(private val list: MutableList<Any?>): MutableIterable<Any?> {
+class KsonArray(private val list: MutableList<Any?>) : MutableIterable<Any?> {
 
     @Suppress("UNCHECKED_CAST")
     fun <T> get(index: Int): T? {
@@ -37,4 +37,3 @@ class KsonArray(private val list: MutableList<Any?>): MutableIterable<Any?> {
     }
 
 }
-
