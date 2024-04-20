@@ -13,7 +13,7 @@ class Kson(private val map: MutableMap<String, Any?>): MutableIterable<Any?> {
     @Suppress("UNCHECKED_CAST")
     fun <T> get(key: String): T? {
         if (!this.map.containsKey(key) || this.map[key] == null) return null
-        return this.map[key] as? T
+        return this.map[key] as? T?
     }
 
     fun set(key: String, value: String?) = this.putToMap(key, value)
