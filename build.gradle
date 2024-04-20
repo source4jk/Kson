@@ -9,5 +9,5 @@ repositories {
     mavenCentral()
 }
 
-group = 'cord.json'
+group = 'source4jk.json'
 version = '0.0.1'

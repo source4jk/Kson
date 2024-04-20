@@ -1,4 +1,4 @@
-package cord.json
+package source4jk.json
 
 fun main() {
     val kson = ksonOf {

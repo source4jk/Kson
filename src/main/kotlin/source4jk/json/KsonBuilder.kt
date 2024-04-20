@@ -1,4 +1,4 @@
-package cord.json
+package source4jk.json
 
 class KsonBuilder {
     private val map: MutableMap<String, Any?> = mutableMapOf()
