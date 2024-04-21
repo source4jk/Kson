@@ -3,76 +3,72 @@ package source4jk.json.collections
 import source4jk.json.Karray
 import source4jk.json.Kson
 
-class MutableKsonList private constructor(list: MutableList<Any>): MutableIterable<Any> {
-
-    val values: MutableList<Any> = mutableListOf()
-
-    init {
-        values.addAll(list)
+class MutableKsonList(): MutableIterable<Any> {
+    constructor(list: MutableList<Any>): this() {
+        this.values.addAll(filter(list))
     }
+
+    constructor(vararg values: Any): this() {
+        this.values.addAll(filter(values.toMutableList()))
+    }
+
+    internal val values: MutableList<Any> = mutableListOf()
 
     @Suppress("UNCHECKED_CAST")
     fun <T> get(index: Int): T? {
-        val entry = this.values[index]
-
-        return entry as? T
+        if (index in this.values.indices) {
+            return this.values[index] as? T
+        }
+        return null
     }
 
-    fun add(index: Int, value: String) = this._add(index, value)
-    fun add(value: String) = this._add(this.values.lastIndex - 1, value)
+    fun add(index: Int, value: Any) {
+        validateType(value)
+        if (index in this.values.indices) {
+            this.values.add(index, value)
+        } else {
+            this.values.add(value)
+        }
+    }
 
-    fun add(index: Int, value: Number) = this._add(index, value)
-    fun add(value: Number) = this._add(this.values.lastIndex - 1, value)
-
-    fun add(index: Int, value: Kson) = this._add(index, value)
-    fun add(value: Kson) = this._add(this.values.lastIndex - 1, value)
-
-    fun add(index: Int, value: Karray) = this._add(index, value)
-    fun add(value: Karray) = this._add(this.values.lastIndex - 1, value)
-
-
-    fun _add(index: Int, value: Any): Any {
-        this.values.add(index, value)
-        return value
+    fun add(value: Any) {
+        validateType(value)
+        this.values.add(value)
     }
 
     fun removeAt(index: Int): Any? {
-        val entry = this.values[index]
-
-        return run {
-            this.values.remove(entry)
-            entry
+        if (index in this.values.indices) {
+            return this.values.removeAt(index)
         }
+        return null
     }
 
-    fun remove(value: String) = this._remove(value)
-    fun remove(value: Number) = this._remove(value)
-    fun remove(value: Kson) = this._remove(value)
-    fun remove(value: Karray) = this._remove(value)
-
-    private fun _remove(value: Any): Any? {
-        val entry = this.values.find { it == value }
-
-        return if (entry == null) {
-            null
-        } else {
-            this.values.remove(entry)
-            entry
-        }
+    fun remove(value: Any): Boolean {
+        return this.values.remove(value)
     }
 
     override fun iterator(): MutableIterator<Any> {
         return this.values.iterator()
     }
 
-    companion object Static {
-        fun fromList(list: MutableList<Any>): MutableKsonList {
-            return MutableKsonList(
-                list.filter {
-                    it is String || it is Number || it is Kson || it is Karray
-                }.toMutableList()
-            )
-        }
+    fun MutableList<Any>.toMutableKsonList(): MutableKsonList {
+        return MutableKsonList(this)
     }
 
+    internal companion object Static {
+        private fun filter(list: MutableList<Any>): MutableList<Any> {
+            return list.filter { validateType(it) }.toMutableList()
+        }
+
+        private fun validateType(value: Any): Boolean {
+            return when (value) {
+                is String -> true
+                is Number -> true
+                is Boolean -> true
+                is Kson -> true
+                is Karray -> true
+                else -> throw IllegalArgumentException("this data type is not valid!")
+            }
+        }
+    }
 }

@@ -1,11 +1,10 @@
 package source4jk.json.collections
 
-import source4jk.json.Kson
 import source4jk.json.Karray
+import source4jk.json.Kson
 import java.util.AbstractMap.SimpleEntry
 
 class MutableKsonMap: MutableIterable<MutableMap.MutableEntry<String, Any?>> {
-
     val entries: MutableSet<MutableMap.MutableEntry<String, Any?>> = mutableSetOf()
 
     val keys: MutableSet<String>
@@ -25,12 +24,8 @@ class MutableKsonMap: MutableIterable<MutableMap.MutableEntry<String, Any?>> {
         }
     }
 
-    fun put(key: String, value: String?) = this._put(key, value)
-    fun put(key: String, value: Number?) = this._put(key, value)
-    fun put(key: String, value: Kson?) = this._put(key, value)
-    fun put(key: String, value: Karray?) = this._put(key, value)
-
-    private fun _put(key: String, value: Any?): Any? {
+    fun put(key: String, value: Any?): Any? {
+        validateType(value)
         val entry = this.entries.find { it.key == key }
 
         return if (entry == null) {
@@ -41,22 +36,36 @@ class MutableKsonMap: MutableIterable<MutableMap.MutableEntry<String, Any?>> {
             this.entries.add(SimpleEntry(key, value))
             value
         }
-
     }
 
     fun remove(key: String): Any? {
-        val entry = this.entries.find { it.key == key }
+        val iterator = this.iterator()
 
-        return if (entry == null) {
-            null
-        } else {
-            this.entries.remove(entry)
-            entry.value
+        while (iterator.hasNext()) {
+            val entry = iterator.next()
+            if (entry.key == key) {
+                iterator.remove()
+                return entry.value
+            }
         }
+        return null
     }
 
     override fun iterator(): MutableIterator<MutableMap.MutableEntry<String, Any?>> {
         return this.entries.iterator()
     }
 
+    internal companion object Static {
+        private fun validateType(value: Any?): Boolean {
+            return when (value) {
+                is String -> true
+                is Number -> true
+                is Boolean -> true
+                is Kson -> true
+                is Karray -> true
+                null -> true
+                else -> throw IllegalArgumentException("this data type is not valid!")
+            }
+        }
+    }
 }
