@@ -1,6 +1,6 @@
 package source4jk.json
 
-import java.util.function.Consumer
+import source4jk.json.collections.MutableKsonMap
 
 fun ksonOf(buildAction: KsonBuilder.() -> Unit): Kson {
     val builder = KsonBuilder()
@@ -8,31 +8,28 @@ fun ksonOf(buildAction: KsonBuilder.() -> Unit): Kson {
     return builder.build()
 }
 
-class Kson(private val map: MutableMap<String, Any?>): MutableIterable<Any?> {
+class Kson internal constructor(
+    private val map: MutableKsonMap
+): MutableIterable<MutableMap.MutableEntry<String, Any?>> {
 
-    fun asString(key: String) = this.map[key] as? String
-    fun asNumber(key: String) = this.map[key] as? Number
-    fun asKson(key: String) = this.map[key] as? Kson
-    fun asKsonArray(key: String) = this.map[key] as? KsonArray
+    val entries: Set<Map.Entry<String, Any?>>
+        get() = this.map.entries.toSet()
 
-    fun set(key: String, value: String?) = this.putToMap(key, value)
-    fun set(key: String, value: Number?) = this.putToMap(key, value)
-    fun set(key: String, value: Kson?) = this.putToMap(key, value)
-    fun set(key: String, value: KsonArray?) = this.putToMap(key, value)
+    val keys: Set<String>
+        get() = this.map.keys.toSet()
 
-    private fun putToMap(key: String, value: Any?): Kson {
-        this.map[key] = value
-        return this
-    }
+    val values: List<Any?>
+        get() = this.map.values.toList()
 
-    override fun forEach(action: Consumer<in Any?>?) {
-        super.forEach(action)
-    }
+    fun <T> get(key: String): T? = this.map.get<T>(key)
+    fun set(key: String, value: String?) = this.map.put(key, value)
+    fun set(key: String, value: Number?) = this.map.put(key, value)
+    fun set(key: String, value: Kson?) = this.map.put(key, value)
+    fun set(key: String, value: Karray?) = this.map.put(key, value)
 
-    override fun iterator(): MutableIterator<Any?> {
+    override fun iterator(): MutableIterator<MutableMap.MutableEntry<String, Any?>> {
         return this.map.iterator()
     }
-
 }
 
 
